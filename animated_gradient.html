@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Gradient - Framer Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #gradientCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        p {
+            font-size: 1.5rem;
+            font-weight: 300;
+            max-width: 600px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            opacity: 0.9;
+        }
+
+        .controls {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 16px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 20;
+            min-width: 280px;
+        }
+
+        .controls h3 {
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            opacity: 0.8;
+            font-weight: 600;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        .control-group select,
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .control-group select {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .control-group select option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            p {
+                font-size: 1.2rem;
+            }
+            .controls {
+                top: auto;
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gradientCanvas"></canvas>
+
+    <div class="content">
+        <h1>Animated Gradient</h1>
+        <p>WebGL shader-based gradient with fluid, organic movement</p>
+    </div>
+
+    <div class="controls">
+        <h3>Customize</h3>
+        
+        <div class="control-group">
+            <label for="preset">Preset</label>
+            <select id="preset">
+                <optgroup label="🔲 SOLID STATE">
+                    <option value="crystal">Crystal</option>
+                    <option value="diamond">Diamond</option>
+                    <option value="metal">Metal</option>
+                    <option value="stone">Stone</option>
+                    <option value="marble">Marble</option>
+                    <option value="emerald">Emerald</option>
+                    <option value="ruby">Ruby</option>
+                    <option value="sapphire">Sapphire</option>
+                    <option value="obsidian">Obsidian</option>
+                    <option value="quartz">Quartz</option>
+                </optgroup>
+                <optgroup label="💧 LIQUID STATE">
+                    <option value="water">Water</option>
+                    <option value="ocean">Ocean</option>
+                    <option value="flow">Flow</option>
+                    <option value="mercury">Mercury</option>
+                    <option value="oil">Oil</option>
+                    <option value="honey">Honey</option>
+                    <option value="lava">Lava</option>
+                    <option value="blood">Blood</option>
+                    <option value="milk">Milk</option>
+                    <option value="wine">Wine</option>
+                </optgroup>
+                <optgroup label="☁️ GAS STATE">
+                    <option value="steam">Steam</option>
+                    <option value="smoke">Smoke</option>
+                    <option value="fog">Fog</option>
+                    <option value="cloud">Cloud</option>
+                    <option value="mist">Mist</option>
+                    <option value="vapor">Vapor</option>
+                    <option value="atmosphere">Atmosphere</option>
+                    <option value="nebula">Nebula</option>
+                </optgroup>
+                <optgroup label="⚡ PLASMA STATE">
+                    <option value="plasma">Plasma</option>
+                    <option value="lightning">Lightning</option>
+                    <option value="electric">Electric</option>
+                    <option value="aurora">Aurora</option>
+                    <option value="solar">Solar</option>
+                    <option value="fusion">Fusion</option>
+                    <option value="corona">Corona</option>
+                    <option value="neon">Neon</option>
+                    <option value="ionized">Ionized</option>
+                </optgroup>
+                <optgroup label="❄️ BOSE-EINSTEIN CONDENSATE">
+                    <option value="quantum">Quantum</option>
+                    <option value="absolute">Absolute Zero</option>
+                    <option value="superfluid">Superfluid</option>
+                    <option value="condensate">Condensate</option>
+                    <option value="zero">Zero Point</option>
+                    <option value="void">Void</option>
+                    <option value="ultracold">Ultracold</option>
+                    <option value="coherent">Coherent</option>
+                </optgroup>
+                <optgroup label="🌟 EXOTIC & NATURE">
+                    <option value="fire">Fire</option>
+                    <option value="ice">Ice</option>
+                    <option value="sunset">Sunset</option>
+                    <option value="forest">Forest</option>
+                    <option value="cosmic">Cosmic</option>
+                    <option value="midnight">Midnight</option>
+                    <option value="tropical">Tropical</option>
+                    <option value="candy">Candy</option>
+                    <option value="rose">Rose Gold</option>
+                    <option value="mint">Mint</option>
+                    <option value="purple">Purple Dream</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="speed">Speed: <span id="speedValue">0.3</span></label>
+            <input type="range" id="speed" min="0.1" max="1" step="0.1" value="0.3">
+        </div>
+
+        <div class="control-group">
+            <label for="distortion">Distortion: <span id="distortionValue">3.5</span></label>
+            <input type="range" id="distortion" min="1" max="6" step="0.5" value="3.5">
+        </div>
+
+        <div class="control-group">
+            <label for="softness">Softness: <span id="softnessValue">0.8</span></label>
+            <input type="range" id="softness" min="0.3" max="1.5" step="0.1" value="0.8">
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gradientCanvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+        if (!gl) {
+            alert('WebGL not supported in your browser');
+        }
+
+        const presets = {
+            // SOLID STATE
+            crystal: { color1: [0.8, 0.9, 1.0], color2: [0.6, 0.7, 0.9], color3: [0.9, 0.95, 1.0] },
+            diamond: { color1: [0.95, 0.95, 1.0], color2: [0.7, 0.8, 0.95], color3: [0.85, 0.9, 1.0] },
+            metal: { color1: [0.5, 0.5, 0.6], color2: [0.7, 0.7, 0.8], color3: [0.4, 0.4, 0.5] },
+            stone: { color1: [0.4, 0.4, 0.4], color2: [0.3, 0.3, 0.35], color3: [0.5, 0.5, 0.55] },
+            marble: { color1: [0.9, 0.9, 0.95], color2: [0.7, 0.75, 0.8], color3: [0.85, 0.85, 0.9] },
+            emerald: { color1: [0.0, 0.8, 0.5], color2: [0.1, 0.6, 0.4], color3: [0.2, 0.9, 0.6] },
+            ruby: { color1: [0.9, 0.0, 0.2], color2: [0.7, 0.1, 0.15], color3: [1.0, 0.2, 0.3] },
+            sapphire: { color1: [0.1, 0.3, 0.8], color2: [0.0, 0.2, 0.6], color3: [0.2, 0.4, 0.9] },
+            obsidian: { color1: [0.1, 0.1, 0.15], color2: [0.2, 0.15, 0.2], color3: [0.05, 0.05, 0.1] },
+            quartz: { color1: [1.0, 0.9, 0.95], color2: [0.9, 0.8, 0.9], color3: [0.95, 0.85, 0.9] },
+            
+            // LIQUID STATE
+            water: { color1: [0.2, 0.6, 1.0], color2: [0.0, 0.8, 0.8], color3: [0.4, 0.3, 0.9] },
+            ocean: { color1: [0.1, 0.4, 0.7], color2: [0.0, 0.5, 0.8], color3: [0.2, 0.6, 0.9] },
+            flow: { color1: [0.3, 0.8, 1.0], color2: [0.5, 0.6, 1.0], color3: [0.2, 0.9, 0.9] },
+            mercury: { color1: [0.7, 0.7, 0.75], color2: [0.5, 0.5, 0.6], color3: [0.8, 0.8, 0.85] },
+            oil: { color1: [0.3, 0.2, 0.4], color2: [0.5, 0.4, 0.6], color3: [0.4, 0.3, 0.5] },
+            honey: { color1: [1.0, 0.7, 0.2], color2: [0.9, 0.6, 0.1], color3: [1.0, 0.8, 0.3] },
+            lava: { color1: [1.0, 0.2, 0.0], color2: [0.6, 0.0, 0.1], color3: [1.0, 0.5, 0.0] },
+            blood: { color1: [0.6, 0.0, 0.0], color2: [0.8, 0.1, 0.1], color3: [0.5, 0.0, 0.05] },
+            milk: { color1: [1.0, 0.98, 0.95], color2: [0.95, 0.93, 0.9], color3: [0.98, 0.96, 0.93] },
+            wine: { color1: [0.5, 0.0, 0.2], color2: [0.4, 0.0, 0.15], color3: [0.6, 0.1, 0.25] },
+            
+            // GAS STATE
+            steam: { color1: [0.9, 0.9, 0.95], color2: [0.85, 0.85, 0.9], color3: [0.95, 0.95, 1.0] },
+            smoke: { color1: [0.5, 0.5, 0.5], color2: [0.4, 0.4, 0.4], color3: [0.6, 0.6, 0.6] },
+            fog: { color1: [0.75, 0.75, 0.8], color2: [0.7, 0.7, 0.75], color3: [0.8, 0.8, 0.85] },
+            cloud: { color1: [0.95, 0.95, 1.0], color2: [0.85, 0.9, 0.95], color3: [0.9, 0.92, 0.98] },
+            mist: { color1: [0.8, 0.85, 0.9], color2: [0.75, 0.8, 0.85], color3: [0.85, 0.9, 0.95] },
+            vapor: { color1: [0.7, 0.8, 0.9], color2: [0.6, 0.75, 0.85], color3: [0.75, 0.85, 0.95] },
+            atmosphere: { color1: [0.4, 0.6, 0.9], color2: [0.5, 0.7, 1.0], color3: [0.3, 0.5, 0.8] },
+            nebula: { color1: [0.6, 0.2, 0.8], color2: [0.3, 0.6, 0.9], color3: [0.8, 0.4, 0.6] },
+            
+            // PLASMA STATE
+            plasma: { color1: [1.0, 0.0, 0.8], color2: [0.0, 1.0, 0.9], color3: [0.5, 0.0, 1.0] },
+            lightning: { color1: [0.8, 0.9, 1.0], color2: [0.6, 0.8, 1.0], color3: [1.0, 1.0, 1.0] },
+            electric: { color1: [0.0, 0.8, 1.0], color2: [0.5, 0.9, 1.0], color3: [0.2, 1.0, 1.0] },
+            aurora: { color1: [0.0, 0.9, 0.6], color2: [0.4, 0.6, 1.0], color3: [0.7, 0.3, 0.9] },
+            solar: { color1: [1.0, 0.8, 0.0], color2: [1.0, 0.5, 0.0], color3: [1.0, 0.9, 0.3] },
+            fusion: { color1: [1.0, 1.0, 0.8], color2: [1.0, 0.9, 0.6], color3: [1.0, 0.95, 0.9] },
+            corona: { color1: [1.0, 0.7, 0.0], color2: [1.0, 0.4, 0.1], color3: [1.0, 0.85, 0.2] },
+            neon: { color1: [1.0, 0.0, 0.5], color2: [0.0, 1.0, 0.8], color3: [0.8, 0.0, 1.0] },
+            ionized: { color1: [0.4, 0.8, 1.0], color2: [0.6, 0.6, 1.0], color3: [0.3, 0.9, 1.0] },
+            
+            // BOSE-EINSTEIN CONDENSATE
+            quantum: { color1: [0.3, 0.0, 0.6], color2: [0.1, 0.2, 0.8], color3: [0.5, 0.0, 0.7] },
+            absolute: { color1: [0.05, 0.05, 0.2], color2: [0.0, 0.1, 0.3], color3: [0.1, 0.0, 0.25] },
+            superfluid: { color1: [0.2, 0.3, 0.9], color2: [0.1, 0.4, 1.0], color3: [0.15, 0.35, 0.95] },
+            condensate: { color1: [0.15, 0.15, 0.4], color2: [0.1, 0.2, 0.5], color3: [0.2, 0.1, 0.45] },
+            zero: { color1: [0.0, 0.1, 0.3], color2: [0.05, 0.0, 0.25], color3: [0.0, 0.15, 0.35] },
+            void: { color1: [0.0, 0.0, 0.1], color2: [0.05, 0.0, 0.15], color3: [0.0, 0.05, 0.12] },
+            ultracold: { color1: [0.2, 0.4, 0.9], color2: [0.1, 0.3, 0.8], color3: [0.15, 0.35, 0.85] },
+            coherent: { color1: [0.3, 0.2, 0.7], color2: [0.2, 0.3, 0.8], color3: [0.25, 0.25, 0.75] },
+            
+            // EXOTIC & NATURE
+            fire: { color1: [1.0, 0.3, 0.0], color2: [1.0, 0.6, 0.0], color3: [0.8, 0.0, 0.2] },
+            ice: { color1: [0.7, 0.9, 1.0], color2: [0.5, 0.8, 0.95], color3: [0.85, 0.95, 1.0] },
+            sunset: { color1: [1.0, 0.4, 0.6], color2: [0.4, 0.2, 0.8], color3: [1.0, 0.6, 0.3] },
+            forest: { color1: [0.2, 0.8, 0.5], color2: [0.1, 0.5, 0.3], color3: [0.6, 0.9, 0.4] },
+            cosmic: { color1: [0.1, 0.1, 0.3], color2: [0.6, 0.2, 0.8], color3: [0.3, 0.6, 0.9] },
+            midnight: { color1: [0.1, 0.2, 0.4], color2: [0.2, 0.1, 0.5], color3: [0.0, 0.3, 0.6] },
+            tropical: { color1: [1.0, 0.6, 0.0], color2: [0.0, 0.9, 0.6], color3: [0.9, 0.2, 0.5] },
+            candy: { color1: [1.0, 0.4, 0.8], color2: [0.6, 0.7, 1.0], color3: [1.0, 0.8, 0.5] },
+            rose: { color1: [1.0, 0.5, 0.7], color2: [0.9, 0.3, 0.5], color3: [1.0, 0.7, 0.6] },
+            mint: { color1: [0.4, 1.0, 0.8], color2: [0.2, 0.8, 0.9], color3: [0.6, 0.9, 0.7] },
+            purple: { color1: [0.6, 0.3, 0.9], color2: [0.9, 0.4, 0.7], color3: [0.4, 0.5, 1.0] }
+        };
+
+        let currentPreset = 'crystal';
+        let speed = 0.3;
+        let distortion = 3.5;
+        let softness = 0.8;
+
+        // Vertex shader
+        const vertexShaderSource = `
+            attribute vec2 position;
+            void main() {
+                gl_Position = vec4(position, 0.0, 1.0);
+            }
+        `;
+
+        // Fragment shader
+        const fragmentShaderSource = `
+            precision highp float;
+            uniform vec2 resolution;
+            uniform float time;
+            uniform vec3 color1;
+            uniform vec3 color2;
+            uniform vec3 color3;
+            uniform float speed;
+            uniform float distortion;
+            uniform float softness;
+
+            float noise(vec2 p) {
+                return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+            }
+
+            float smoothNoise(vec2 p) {
+                vec2 i = floor(p);
+                vec2 f = fract(p);
+                f = f * f * (3.0 - 2.0 * f);
+                
+                float a = noise(i);
+                float b = noise(i + vec2(1.0, 0.0));
+                float c = noise(i + vec2(0.0, 1.0));
+                float d = noise(i + vec2(1.0, 1.0));
+                
+                return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+            }
+
+            float fbm(vec2 p) {
+                float value = 0.0;
+                float amplitude = 0.5;
+                float frequency = 1.0;
+                
+                for(int i = 0; i < 5; i++) {
+                    value += amplitude * smoothNoise(p * frequency);
+                    frequency *= 2.0;
+                    amplitude *= 0.5;
+                }
+                return value;
+            }
+
+            void main() {
+                vec2 uv = gl_FragCoord.xy / resolution;
+                vec2 p = uv * 2.0 - 1.0;
+                p.x *= resolution.x / resolution.y;
+
+                float t = time * speed;
+                vec2 warp = vec2(
+                    fbm(p * distortion + t * 0.3),
+                    fbm(p * distortion + t * 0.3 + 100.0)
+                );
+                
+                p += warp * 0.5;
+
+                float dist1 = length(p - vec2(sin(t * 0.5) * 0.8, cos(t * 0.3) * 0.6));
+                float dist2 = length(p - vec2(cos(t * 0.4) * 0.7, sin(t * 0.6) * 0.8));
+                float dist3 = length(p - vec2(sin(t * 0.7) * 0.6, cos(t * 0.5) * 0.7));
+
+                float blend1 = smoothstep(1.5, 0.0, dist1 * softness);
+                float blend2 = smoothstep(1.5, 0.0, dist2 * softness);
+                float blend3 = smoothstep(1.5, 0.0, dist3 * softness);
+
+                vec3 color = mix(
+                    mix(color1 * blend1, color2 * blend2, 0.5),
+                    color3 * blend3,
+                    0.33
+                );
+
+                float gradientY = smoothstep(0.0, 1.0, uv.y);
+                color = mix(color, color * 0.8, gradientY * 0.3);
+
+                gl_FragColor = vec4(color, 1.0);
+            }
+        `;
+
+        function createShader(type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('Shader error:', gl.getShaderInfoLog(shader));
+                return null;
+            }
+            return shader;
+        }
+
+        const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+        const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.error('Program error:', gl.getProgramInfoLog(program));
+        }
+
+        const positions = new Float32Array([
+            -1, -1,
+            1, -1,
+            -1, 1,
+            1, 1,
+        ]);
+
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+        const positionLocation = gl.getAttribLocation(program, 'position');
+        const resolutionLocation = gl.getUniformLocation(program, 'resolution');
+        const timeLocation = gl.getUniformLocation(program, 'time');
+        const color1Location = gl.getUniformLocation(program, 'color1');
+        const color2Location = gl.getUniformLocation(program, 'color2');
+        const color3Location = gl.getUniformLocation(program, 'color3');
+        const speedLocation = gl.getUniformLocation(program, 'speed');
+        const distortionLocation = gl.getUniformLocation(program, 'distortion');
+        const softnessLocation = gl.getUniformLocation(program, 'softness');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+
+        const startTime = Date.now();
+
+        function render() {
+            const time = (Date.now() - startTime) * 0.001;
+
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.useProgram(program);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.enableVertexAttribArray(positionLocation);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+            gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+            gl.uniform1f(timeLocation, time);
+            gl.uniform3fv(color1Location, presets[currentPreset].color1);
+            gl.uniform3fv(color2Location, presets[currentPreset].color2);
+            gl.uniform3fv(color3Location, presets[currentPreset].color3);
+            gl.uniform1f(speedLocation, speed);
+            gl.uniform1f(distortionLocation, distortion);
+            gl.uniform1f(softnessLocation, softness);
+
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+            requestAnimationFrame(render);
+        }
+
+        render();
+
+        // Controls
+        document.getElementById('preset').addEventListener('change', (e) => {
+            currentPreset = e.target.value;
+        });
+
+        document.getElementById('speed').addEventListener('input', (e) => {
+            speed = parseFloat(e.target.value);
+            document.getElementById('speedValue').textContent = speed.toFixed(1);
+        });
+
+        document.getElementById('distortion').addEventListener('input', (e) => {
+            distortion = parseFloat(e.target.value);
+            document.getElementById('distortionValue').textContent = distortion.toFixed(1);
+        });
+
+        document.getElementById('softness').addEventListener('input', (e) => {
+            softness = parseFloat(e.target.value);
+            document.getElementById('softnessValue').textContent = softness.toFixed(1);
+        });
+    </script>
+</body>
+</html>
