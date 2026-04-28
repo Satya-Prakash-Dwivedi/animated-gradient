@@ -28,7 +28,6 @@ const AnimatedGradient: React.FC = () => {
         speed={speed}
         distortion={distortion}
         softness={softness}
-        presets={presets}
         onPresetChange={setCurrentPreset}
         onSpeedChange={setSpeed}
         onDistortionChange={setDistortion}

@@ -11,7 +11,7 @@ interface GradientCanvasProps {
 const GradientCanvas: React.FC<GradientCanvasProps> = ({ preset, speed, distortion, softness }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const programRef = useRef<WebGLProgram | null>(null);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | undefined>(undefined);
   const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {

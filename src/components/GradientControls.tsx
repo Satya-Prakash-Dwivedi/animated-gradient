@@ -5,7 +5,6 @@ interface GradientControlsProps {
   speed: number;
   distortion: number;
   softness: number;
-  presets: Record<string, any>;
   onPresetChange: (preset: string) => void;
   onSpeedChange: (speed: number) => void;
   onDistortionChange: (distortion: number) => void;
@@ -17,7 +16,6 @@ const GradientControls: React.FC<GradientControlsProps> = ({
   speed,
   distortion,
   softness,
-  presets,
   onPresetChange,
   onSpeedChange,
   onDistortionChange,
